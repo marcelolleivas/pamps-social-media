@@ -1,0 +1,44 @@
+"""Security utilities"""
+from passlib.context import CryptContext
+
+from pamps.config import settings
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+SECRET_KEY = settings.security.secret_key
+ALGORITHM = settings.security.algorithm
+
+
+def verify_password(plain_password, hashed_password) -> bool:
+    """Verifies a hash against a password"""
+    return pwd_context.verify(plain_password, hashed_password)
+
+
+def get_password_hash(password) -> str:
+    """Generates a hash from plain text"""
+    return pwd_context.hash(password)
+
+
+class HashedPassword(str):
+    """Takes a plain text password and hashes it.
+    use this as a field in your SQLModel
+    class User(SQLModel, table=True):
+        username: str
+        password: HashedPassword
+    """
+
+    @classmethod
+    def __get_validators(cls):
+        # one or more validators may be yielded which will be called in the
+        # order to validate the input, each validator will receive as an input
+        # the value returned from the previous validator
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, value):
+        """Accepts a plain text password and returns a hashed password."""
+        if not isinstance(value, str):
+            raise TypeError("String required!")
+
+        hashed_password = get_password_hash(value)
+        return cls(hashed_password)
