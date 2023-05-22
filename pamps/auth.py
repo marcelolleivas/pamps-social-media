@@ -1,4 +1,4 @@
-"""Token absed auth"""
+"""Token based auth"""
 from datetime import datetime, timedelta
 from typing import Callable, Optional, Union
 
