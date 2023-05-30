@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import TYPE_CHECKING, Optional, List
 
 from sqlmodel import Field, SQLModel, Relationship
@@ -39,3 +40,12 @@ class UserRequest(BaseModel):
     password: str
     avatar: Optional[str] = None
     bio: Optional[str] = None
+
+
+class Social(SQLModel, table=True):
+    """Represents the Social Model"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    date: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+
+    from_id: Optional[int] = Field(foreign_key="user.id")
+    to_id: Optional[int] = Field(foreign_key="user.id")
