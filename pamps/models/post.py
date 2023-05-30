@@ -10,6 +10,15 @@ if TYPE_CHECKING:
     from pamps.models.user import User
 
 
+class Like(SQLModel, table=True):
+    """Represents the Like Model"""
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+
+    user_id: Optional[int] = Field(foreign_key="user.id")
+    post_id: Optional[int] = Field(foreign_key="post.id")
+
+
 class Post(SQLModel, table=True):
     """Represents the Post Model"""
 

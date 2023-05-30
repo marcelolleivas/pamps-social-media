@@ -10,7 +10,7 @@ from pamps.models.post import (
     Post,
     PostRequest,
     PostResponse,
-    PostResponseWithReplies,
+    PostResponseWithReplies, Like,
 )
 from pamps.models.user import User
 
@@ -49,7 +49,7 @@ async def get_posts_by_username(
     """Get posts by username"""
     filters = [User.username == username]
     if not include_replies:
-        filters.append(Post.parent == None)
+        filters.append(Post.parent is None)
     query = select(Post).join(User).where(*filters)
     posts = session.exec(query).all()
     return posts
@@ -70,4 +70,75 @@ async def create_post(
     session.add(db_post)
     session.commit()
     session.refresh(db_post)
+    return db_post
+
+
+@router.get("/likes/{username}/", response_model=List[PostResponse])
+async def get_user_post_likes_by_username(
+        *,
+        session: Session = ActiveSession,
+        username: str,
+):
+    subquery = (
+        select(Like.post_id)
+            .join(User, User.id == Like.user_id)
+            .where(User.username == username)
+            .subquery()
+    )
+
+    query = (
+        select(Post)
+            .join(subquery, Post.id == subquery.c.post_id)
+    )
+
+    posts = session.execute(query)
+    return posts.scalars().all()
+
+
+@router.post("/posts/{post_id}/like/", response_model=PostResponse, status_code=201)
+async def like_post(
+        *,
+        session: Session = ActiveSession,
+        user: User = AuthenticatedUser,
+        post_id: int,
+):
+    """Likes a post"""
+
+    post = session.exec(select(Post).where(Post.id == post_id)).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    like = Like(user_id=user.id, post_id=post_id)
+    session.add(like)
+    session.commit()
+
+    db_post = Post.from_orm(post)
+    return db_post
+
+
+@router.delete("/posts/{post_id}/like/", response_model=PostResponse, status_code=201)
+async def dislike_post(
+        *,
+        session: Session = ActiveSession,
+        user: User = AuthenticatedUser,
+        post_id: int,
+):
+    """Dislikes a post"""
+
+    post = session.exec(select(Post).where(Post.id == post_id)).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    like = (
+        session.exec(
+            select(Like)
+            .where(Like.user_id == user.id, Like.post_id == post.id)).first()
+    )
+
+    if not like:
+        raise HTTPException(status_code=404, detail="Like not found")
+
+    session.delete(like)
+    session.commit()
+    db_post = Post.from_orm(post)
     return db_post
