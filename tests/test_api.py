@@ -1,6 +1,6 @@
 import pytest
 
-from pamps.models import Social
+from pamps.models import Social, Like
 
 
 @pytest.mark.order(1)
@@ -169,7 +169,7 @@ def test_user_tries_unfollowing_himself_and_get_400(session, api_client_user_1):
     assert result["detail"] == "Invalid user_id"
 
 
-@pytest.mark.order(13)
+@pytest.mark.order(14)
 def test_user_tries_unfollowing_non_existent_user_and_get_404(
         session, api_client_user_1, api_client_user_2
 ):
@@ -185,7 +185,7 @@ def test_user_tries_unfollowing_non_existent_user_and_get_404(
     assert not following_succeeded
 
 
-@pytest.mark.order(14)
+@pytest.mark.order(15)
 def test_user_unfollows_user_and_get_204(
         session, api_client_user_1, api_client_user_2
 ):
@@ -200,7 +200,7 @@ def test_user_unfollows_user_and_get_204(
     assert following_count == 0
 
 
-@pytest.mark.order(15)
+@pytest.mark.order(16)
 def test_user_tries_unfollowing_not_following_and_get_204(
         session, api_client_user_1, api_client_user_2
 ):
@@ -213,3 +213,81 @@ def test_user_tries_unfollowing_not_following_and_get_204(
         .count()
     )
     assert following_count == 0
+
+
+@pytest.mark.order(17)
+def test_user_likes_his_own_post(session, api_client_user_1):
+    response = api_client_user_1.post("/post/1/like")
+    like_is_on_db = (
+        session.query(Like).filter(Like.user_id == 1, Like.post_id == 1).first()
+    )
+    result = response.json()
+
+    assert response.status_code == 201
+    assert result["id"] == 1
+    assert result["text"] == "hello test 1"
+    assert result["date"]
+    assert result["user_id"] == 1
+    assert result["parent_id"] is None
+    assert like_is_on_db
+
+
+@pytest.mark.order(18)
+def test_user_likes_a_post(session, api_client_user_2):
+    response = api_client_user_2.post("/post/1/like")
+    like_is_on_db = (
+        session.query(Like).filter(Like.user_id == 2, Like.post_id == 1).first()
+    )
+    result = response.json()
+
+    assert response.status_code == 201
+    assert result["id"] == 1
+    assert result["text"] == "hello test 1"
+    assert result["date"]
+    assert result["user_id"] == 1
+    assert result["parent_id"] is None
+    assert like_is_on_db
+
+
+@pytest.mark.order(19)
+def test_try_to_like_non_existent_post_and_get_404(session, api_client_user_2):
+    response = api_client_user_2.post("/post/12/like")
+    result = response.json()
+
+    assert response.status_code == 404
+    assert result["detail"] == "Post not found"
+
+
+@pytest.mark.order(20)
+def test_user_dislikes_a_post(session, api_client_user_2):
+    response = api_client_user_2.delete("/post/1/like")
+    like_is_on_db = (
+        session.query(Like).filter(Like.user_id == 2, Like.post_id == 1).first()
+    )
+    result = response.json()
+
+    assert response.status_code == 201
+    assert result["id"] == 1
+    assert result["text"] == "hello test 1"
+    assert result["date"]
+    assert result["user_id"] == 1
+    assert result["parent_id"] is None
+    assert not like_is_on_db
+
+
+@pytest.mark.order(21)
+def test_try_to_dislike_non_existent_post_and_get_404(session, api_client_user_2):
+    response = api_client_user_2.delete("/post/12/like")
+    result = response.json()
+
+    assert response.status_code == 404
+    assert result["detail"] == "Post not found"
+
+
+@pytest.mark.order(22)
+def test_try_to_dislike_non_existent_liked_post_and_get_404(session, api_client_user_2):
+    response = api_client_user_2.delete("/post/2/like")
+    result = response.json()
+
+    assert response.status_code == 404
+    assert result["detail"] == "Like not found"
