@@ -49,7 +49,7 @@ async def get_posts_by_username(
     """Get posts by username"""
     filters = [User.username == username]
     if not include_replies:
-        filters.append(Post.parent is None)
+        filters.append(Post.parent == None)
     query = select(Post).join(User).where(*filters)
     posts = session.exec(query).all()
     return posts
@@ -81,21 +81,21 @@ async def get_user_post_likes_by_username(
 ):
     subquery = (
         select(Like.post_id)
-            .join(User, User.id == Like.user_id)
-            .where(User.username == username)
-            .subquery()
+        .join(User, User.id == Like.user_id)
+        .where(User.username == username)
+        .subquery()
     )
 
     query = (
         select(Post)
-            .join(subquery, Post.id == subquery.c.post_id)
+        .join(subquery, Post.id == subquery.c.post_id)
     )
 
     posts = session.execute(query)
     return posts.scalars().all()
 
 
-@router.post("/posts/{post_id}/like/", response_model=PostResponse, status_code=201)
+@router.post("/{post_id}/like/", response_model=PostResponse, status_code=201)
 async def like_post(
         *,
         session: Session = ActiveSession,
@@ -103,7 +103,6 @@ async def like_post(
         post_id: int,
 ):
     """Likes a post"""
-
     post = session.exec(select(Post).where(Post.id == post_id)).first()
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
@@ -116,7 +115,7 @@ async def like_post(
     return db_post
 
 
-@router.delete("/posts/{post_id}/like/", response_model=PostResponse, status_code=201)
+@router.delete("/{post_id}/like/", response_model=PostResponse, status_code=201)
 async def dislike_post(
         *,
         session: Session = ActiveSession,
@@ -124,7 +123,6 @@ async def dislike_post(
         post_id: int,
 ):
     """Dislikes a post"""
-
     post = session.exec(select(Post).where(Post.id == post_id)).first()
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
