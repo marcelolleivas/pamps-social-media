@@ -25,9 +25,7 @@ def shell():
     try:
         from IPython import start_ipython
 
-        start_ipython(
-            argv=["--ipython-dir=/tmp", "--no-banner"], user_ns=_vars
-        )
+        start_ipython(argv=["--ipython-dir=/tmp", "--no-banner"], user_ns=_vars)
     except ImportError:
         import code
 
@@ -83,9 +81,7 @@ def create_user(email: str, username: str, password: str, user_id=None):
 
 @main.command()
 def reset_db(
-    force: bool = typer.Option(
-        False, "--force", "-f", help="Run with no confirmation"
-    )
+    force: bool = typer.Option(False, "--force", "-f", help="Run with no confirmation")
 ):
     """Resets the database tables"""
     force = force or typer.confirm("Are you sure?")

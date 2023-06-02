@@ -3,9 +3,16 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from pamps.auth import (RefreshToken, Token, User, authenticate_user,
-                        create_access_token, create_refresh_token, get_user,
-                        validate_token)
+from pamps.auth import (
+    RefreshToken,
+    Token,
+    User,
+    authenticate_user,
+    create_access_token,
+    create_refresh_token,
+    get_user,
+    validate_token,
+)
 from pamps.config import settings
 
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.security.access_token_expire_minutes

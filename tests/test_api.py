@@ -118,9 +118,7 @@ def test_all_posts_from_user_1(api_client):
 
 @pytest.mark.order(8)
 def test_all_posts_from_user_1_with_replies(api_client):
-    response = api_client.get(
-        "/post/user/user_1/", params={"include_replies": True}
-    )
+    response = api_client.get("/post/user/user_1/", params={"include_replies": True})
     assert response.status_code == 200
     results = response.json()
     assert len(results) == 3
@@ -133,24 +131,20 @@ def test_user_1_follows_user_2(session, api_client_user_1, api_client_user_2):
     assert len(response.content) == 0
 
     following_succeeded = (
-        session.query(Social)
-        .filter(Social.from_id == 1, Social.to_id == 2)
-        .first()
+        session.query(Social).filter(Social.from_id == 1, Social.to_id == 2).first()
     )
     assert following_succeeded
 
 
 @pytest.mark.order(10)
 def test_user_tries_following_non_existent_user_and_get_404(
-        session, api_client_user_1, api_client_user_2
+    session, api_client_user_1, api_client_user_2
 ):
     response = api_client_user_1.post("/user/follow/3")
     assert response.status_code == 404
     result = response.json()
     following_succeeded = (
-        session.query(Social)
-        .filter(Social.from_id == 1, Social.to_id == 3)
-        .first()
+        session.query(Social).filter(Social.from_id == 1, Social.to_id == 3).first()
     )
     assert result["detail"] == "User not found"
     assert not following_succeeded
@@ -174,22 +168,20 @@ def test_user_tries_following_himself_and_get_400(session, api_client_user_1):
 
 @pytest.mark.order(13)
 def test_user_tries_following_again_and_get_204(
-        session, api_client_user_1, api_client_user_2
+    session, api_client_user_1, api_client_user_2
 ):
     response = api_client_user_1.post("/user/follow/2")
     assert response.status_code == 204
     assert len(response.content) == 0
     following_count = (
-        session.query(Social)
-        .filter(Social.from_id == 1, Social.to_id == 2)
-        .count()
+        session.query(Social).filter(Social.from_id == 1, Social.to_id == 2).count()
     )
     assert following_count == 1
 
 
 @pytest.mark.order(14)
 def test_user_tries_unfollowing_negative_integer_and_get_400(
-        session, api_client_user_1
+    session, api_client_user_1
 ):
     response = api_client_user_1.delete("/user/follow/-1")
     assert response.status_code == 400
@@ -207,46 +199,38 @@ def test_user_tries_unfollowing_himself_and_get_400(session, api_client_user_1):
 
 @pytest.mark.order(16)
 def test_user_tries_unfollowing_non_existent_user_and_get_404(
-        session, api_client_user_1, api_client_user_2
+    session, api_client_user_1, api_client_user_2
 ):
     response = api_client_user_1.delete("/user/follow/3")
     assert response.status_code == 404
     result = response.json()
     following_succeeded = (
-        session.query(Social)
-        .filter(Social.from_id == 1, Social.to_id == 3)
-        .first()
+        session.query(Social).filter(Social.from_id == 1, Social.to_id == 3).first()
     )
     assert result["detail"] == "User not found"
     assert not following_succeeded
 
 
 @pytest.mark.order(17)
-def test_user_unfollows_user_and_get_204(
-        session, api_client_user_1, api_client_user_2
-):
+def test_user_unfollows_user_and_get_204(session, api_client_user_1, api_client_user_2):
     response = api_client_user_1.delete("/user/follow/2")
     assert response.status_code == 204
     assert len(response.content) == 0
     following_count = (
-        session.query(Social)
-        .filter(Social.from_id == 1, Social.to_id == 2)
-        .count()
+        session.query(Social).filter(Social.from_id == 1, Social.to_id == 2).count()
     )
     assert following_count == 0
 
 
 @pytest.mark.order(18)
 def test_user_tries_unfollowing_not_following_and_get_204(
-        session, api_client_user_1, api_client_user_2
+    session, api_client_user_1, api_client_user_2
 ):
     response = api_client_user_2.delete("/user/follow/1")
     assert response.status_code == 204
     assert len(response.content) == 0
     following_count = (
-        session.query(Social)
-        .filter(Social.from_id == 2, Social.to_id == 1)
-        .count()
+        session.query(Social).filter(Social.from_id == 2, Social.to_id == 1).count()
     )
     assert following_count == 0
 

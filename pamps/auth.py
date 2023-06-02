@@ -34,9 +34,7 @@ class TokenData(BaseModel):
     username: Optional[str] = None
 
 
-def create_access_token(
-    data: dict, expires_delta: Optional[timedelta] = None
-) -> str:
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """Creates a JWT Token from user data"""
     to_encode = data.copy()
     if expires_delta:
@@ -48,9 +46,7 @@ def create_access_token(
     return encoded_jwt
 
 
-def create_refresh_token(
-    data: dict, expires_delta: Optional[timedelta] = None
-) -> str:
+def create_refresh_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """Refresh an expired token"""
     to_encode = data.copy()
     if expires_delta:

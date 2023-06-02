@@ -34,7 +34,5 @@ setup(
     packages=find_packages(exclude=["tests"]),
     include_package_data=True,
     install_requires=read_requirements("requirements.txt"),
-    entry_points={
-        "console_scripts": ["pamps = pamps.cli:main"]
-    }
+    entry_points={"console_scripts": ["pamps = pamps.cli:main"]},
 )
