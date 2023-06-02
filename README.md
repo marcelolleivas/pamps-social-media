@@ -1,5 +1,5 @@
 # Pamps
-Simple social media and social networking service.
+Simple social media and social networking service. Based on [fastapi-workshop](https://github.com/rochacbruno/fastapi-workshop).
 
 - [Quick start](#quickstart)
 - [Data Structure](#data-structure)
@@ -8,7 +8,8 @@ Simple social media and social networking service.
 - [Tests and Test Coverage](#tests-and-test-coverage)
 
 ## Quickstart
-You must create a virtual env and install the project dependencies.
+You must create a virtual env and install the project dependencies. 
+**Python 3.8 or greater required**.
 
 ### Installation
 ```commandline
