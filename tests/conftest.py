@@ -4,11 +4,10 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
-from sqlalchemy import table
 
 from pamps.app import app
-from pamps.db import engine
 from pamps.cli import create_user
+from pamps.db import engine
 
 os.environ["PAMPS_DB__uri"] = "postgresql://postgres:postgres@db:5432/pamps_test"
 

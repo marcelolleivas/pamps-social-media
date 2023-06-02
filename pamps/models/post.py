@@ -1,7 +1,7 @@
 """Post related data models"""
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, List
+from typing import TYPE_CHECKING, List, Optional
 
 from pydantic import BaseModel, Extra
 from sqlmodel import Field, Relationship, SQLModel

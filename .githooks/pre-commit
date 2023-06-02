@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Check if the virtual environment is activated
+if [[ -z "$VIRTUAL_ENV" ]]; then
+    echo "Please activate your virtual environment before committing."
+    exit 1
+fi
+
+# Check if required dependencies are installed
+missing_dependencies=()
+
+if ! command -v flake8 >/dev/null 2>&1; then
+    missing_dependencies+=("flake8")
+fi
+
+if ! command -v isort >/dev/null 2>&1; then
+    missing_dependencies+=("isort")
+fi
+
+if ! command -v black >/dev/null 2>&1; then
+    missing_dependencies+=("black")
+fi
+
+# Print error message and exit if any dependency is missing
+if [[ ${#missing_dependencies[@]} -gt 0 ]]; then
+    echo "Please make sure the following dependencies are installed: ${missing_dependencies[*]}"
+    echo "You can install them by running: pip install flake8 isort black"
+    exit 1
+fi
+
+# Run the desired commands or actions
+make code-convention-check
+
+# Check the exit code of the make command
+make_exit_code=$?
+if [[ $make_exit_code -ne 0 ]]; then
+    echo "The 'make code-convention-check' command failed. Please fix the code conventions and try again."
+    exit $make_exit_code
+fi

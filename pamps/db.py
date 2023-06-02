@@ -17,4 +17,3 @@ def get_session():
 
 
 ActiveSession = Depends(get_session)
-

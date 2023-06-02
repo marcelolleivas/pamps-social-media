@@ -5,7 +5,7 @@ from sqlmodel import Session, select
 
 from pamps.auth import AuthenticatedUser
 from pamps.db import ActiveSession
-from pamps.models.user import UserResponse, User, UserRequest, Social
+from pamps.models.user import Social, User, UserRequest, UserResponse
 
 router = APIRouter()
 
@@ -18,9 +18,7 @@ async def list_users(*, session: Session = ActiveSession):
 
 
 @router.get("/{username}/", response_model=UserResponse)
-async def get_user_by_username(
-        *, session: Session = ActiveSession, username: str
-):
+async def get_user_by_username(*, session: Session = ActiveSession, username: str):
     """Get user by username"""
     query = select(User).where(User.username == username)
     user = session.exec(query).first()
@@ -44,10 +42,10 @@ async def create_user(*, session: Session = ActiveSession, user: UserRequest):
     status_code=204,
 )
 async def follow_user(
-        *,
-        session: Session = ActiveSession,
-        user: User = AuthenticatedUser,
-        user_id: int,
+    *,
+    session: Session = ActiveSession,
+    user: User = AuthenticatedUser,
+    user_id: int,
 ) -> None:
     """Follows new user"""
     if user_id <= 0 or user_id == user.id:
@@ -76,10 +74,10 @@ async def follow_user(
     status_code=204,
 )
 async def unfollow_user(
-        *,
-        session: Session = ActiveSession,
-        user: User = AuthenticatedUser,
-        user_id: int,
+    *,
+    session: Session = ActiveSession,
+    user: User = AuthenticatedUser,
+    user_id: int,
 ) -> None:
     """Unfollows user"""
     if user_id <= 0 or user_id == user.id:
