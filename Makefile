@@ -28,6 +28,10 @@ clean: .clean-build .clean-pyc .clean-test ## remove all build, test, coverage a
 
 tests: .unit-test .clean-test
 
+
+isort-fix:
+	isort pamps tests setup.py
+
 lint-check:
 	flake8 pamps tests --count --select=E9,Fb3,F7,F82 --show-source --statistics
 	flake8 pamps tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
