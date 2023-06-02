@@ -37,7 +37,7 @@ tests: .unit-test .clean-test
 
 code-convention: .black-fix .isort-fix
 
-lint-check:
+code-convention-check:
 	flake8 pamps tests --count --select=E9,Fb3,F7,F82 --show-source --statistics
 	flake8 pamps tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 	isort --check --diff --multi-line=3 --line-length=88 --trailing-comma pamps tests setup.py
