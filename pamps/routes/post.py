@@ -20,7 +20,7 @@ router = APIRouter()
 @router.get("/", response_model=List[PostResponse])
 async def list_posts(*, session: Session = ActiveSession):
     """List all posts without replies"""
-    query = select(Post).where(Post.parent == None)
+    query = select(Post).where(Post.parent == None)     # noqa: E711
     posts = session.exec(query).all()
     return posts
 
@@ -49,7 +49,7 @@ async def get_posts_by_username(
     """Get posts by username"""
     filters = [User.username == username]
     if not include_replies:
-        filters.append(Post.parent == None)
+        filters.append(Post.parent == None)     # noqa: E711
     query = select(Post).join(User).where(*filters)
     posts = session.exec(query).all()
     return posts

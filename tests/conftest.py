@@ -4,7 +4,6 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
-from sqlalchemy import table
 
 from pamps.app import app
 from pamps.db import engine
