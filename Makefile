@@ -26,7 +26,7 @@ clean: .clean-build .clean-pyc .clean-test ## remove all build, test, coverage a
 .unit-test:
 	./test.sh
 
-tests: .unit-test .clean-test
+tests-with-coverage: .unit-test .clean-test
 
 
 .isort-fix:
