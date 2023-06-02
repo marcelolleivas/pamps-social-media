@@ -1,8 +1,8 @@
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, List
+from typing import TYPE_CHECKING, List, Optional
 
-from sqlmodel import Field, SQLModel, Relationship
 from pydantic import BaseModel
+from sqlmodel import Field, Relationship, SQLModel
 
 from pamps.security import HashedPassword
 

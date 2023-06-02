@@ -5,7 +5,7 @@ from sqlmodel import Session, select
 
 from pamps.auth import AuthenticatedUser
 from pamps.db import ActiveSession
-from pamps.models.user import UserResponse, User, UserRequest, Social
+from pamps.models.user import Social, User, UserRequest, UserResponse
 
 router = APIRouter()
 

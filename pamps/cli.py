@@ -5,7 +5,7 @@ from sqlmodel import Session, select
 
 from .config import settings
 from .db import engine
-from .models import SQLModel, User, Post, Social
+from .models import Post, Social, SQLModel, User
 
 main = typer.Typer(name="Pamps CLI")
 

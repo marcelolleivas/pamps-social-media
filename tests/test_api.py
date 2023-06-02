@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from pamps.models import Social, Like
+from pamps.models import Like, Social
 
 
 @pytest.mark.order(1)

@@ -6,12 +6,8 @@ from sqlmodel import Session, select
 
 from pamps.auth import AuthenticatedUser
 from pamps.db import ActiveSession
-from pamps.models.post import (
-    Post,
-    PostRequest,
-    PostResponse,
-    PostResponseWithReplies, Like,
-)
+from pamps.models.post import (Like, Post, PostRequest, PostResponse,
+                               PostResponseWithReplies)
 from pamps.models.user import User
 
 router = APIRouter()
