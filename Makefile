@@ -1,4 +1,5 @@
-SHELL := /bin/bash
+.ONESHELL:
+ENV_PREFIX=$(shell python -c "if __import__('pathlib').Path('.venv/bin/pip').exists(): print('.venv/bin/')")
 
 .clean-test: ## remove test and coverage artifacts
 	rm -fr .tox/
@@ -26,8 +27,10 @@ clean: .clean-build .clean-pyc .clean-test ## remove all build, test, coverage a
 .unit-test:
 	./test.sh
 
-tests-with-coverage: .unit-test .clean-test
-
+tests-with-coverage:
+	$(ENV_PREFIX)coverage run -m pytest -v -l --tb=short --maxfail=1 tests/
+	$(ENV_PREFIX)coverage xml
+	$(ENV_PREFIX)coverage report --fail-under=90 --show-missing --omit="setup.py,pamps/cli.py,tests/*.py"
 
 .isort-fix:
 	isort --multi-line=3 --line-length=88 --trailing-comma pamps tests setup.py
