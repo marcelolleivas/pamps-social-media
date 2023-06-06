@@ -1,6 +1,6 @@
 """Database connection"""
 from fastapi import Depends
-from sqlmodel import Session, create_engine
+from sqlmodel import Session, SQLModel, create_engine
 
 from .config import settings
 
@@ -9,6 +9,10 @@ engine = create_engine(
     echo=settings.db.echo,
     connect_args=settings.db.connect_args,
 )
+
+
+def create_db_and_tables(engine):
+    SQLModel.metadata.create_all(engine)
 
 
 def get_session():

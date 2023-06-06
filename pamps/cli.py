@@ -1,4 +1,5 @@
 import typer
+import uvicorn
 from rich.console import Console
 from rich.table import Table
 from sqlmodel import Session, select
@@ -7,10 +8,27 @@ from .config import settings
 from .db import engine
 from .models import Post, Social, SQLModel, User
 
-main = typer.Typer(name="Pamps CLI")
+cli = typer.Typer(name="Pamps CLI")
 
 
-@main.command()
+@cli.command()
+def run(
+    port: int = settings.server.port,
+    host: str = settings.server.host,
+    log_level: str = settings.server.log_level,
+    reload: bool = settings.server.reload,
+):  # pragma: no cover
+    """Run the API server."""
+    uvicorn.run(
+        "project_name.app:app",
+        host=host,
+        port=port,
+        log_level=log_level,
+        reload=reload,
+    )
+
+
+@cli.command()
 def shell():
     """Opens interactive shell"""
     _vars = {
@@ -32,7 +50,7 @@ def shell():
         code.InteractiveConsole(_vars).interact()
 
 
-@main.command()
+@cli.command()
 def user_list():
     """Lists all users"""
     table = Table(title="Pamps users")
@@ -48,7 +66,7 @@ def user_list():
     Console().print(table)
 
 
-@main.command()
+@cli.command()
 def social_list():
     """Lists all users"""
     table = Table(title="Pamps social")
@@ -64,7 +82,7 @@ def social_list():
     Console().print(table)
 
 
-@main.command()
+@cli.command()
 def create_user(email: str, username: str, password: str, user_id=None):
     """Create user"""
     with Session(engine) as session:
@@ -79,7 +97,7 @@ def create_user(email: str, username: str, password: str, user_id=None):
         return user
 
 
-@main.command()
+@cli.command()
 def reset_db(
     force: bool = typer.Option(False, "--force", "-f", help="Run with no confirmation")
 ):
