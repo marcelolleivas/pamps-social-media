@@ -1,4 +1,5 @@
-SHELL := /bin/bash
+.ONESHELL:
+ENV_PREFIX=$(shell python -c "if __import__('pathlib').Path('.venv/bin/pip').exists(): print('.venv/bin/')")
 
 .clean-test: ## remove test and coverage artifacts
 	rm -fr .tox/
@@ -26,8 +27,10 @@ clean: .clean-build .clean-pyc .clean-test ## remove all build, test, coverage a
 .unit-test:
 	./test.sh
 
-tests-with-coverage: .unit-test .clean-test
-
+tests-with-coverage:
+	$(ENV_PREFIX)coverage run -m pytest -v -l --tb=short --maxfail=1 tests/
+	$(ENV_PREFIX)coverage xml
+	$(ENV_PREFIX)coverage report --fail-under=90 --show-missing --omit="setup.py,pamps/cli.py,tests/*.py"
 
 .isort-fix:
 	isort --multi-line=3 --line-length=88 --trailing-comma pamps tests setup.py
@@ -38,7 +41,6 @@ tests-with-coverage: .unit-test .clean-test
 code-convention: .black-fix .isort-fix
 
 code-convention-check:
-	flake8 pamps tests --count --select=E9,Fb3,F7,F82 --show-source --statistics
-	flake8 pamps tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+	flake8 pamps tests --count --exit-zero --max-complexity=10 --max-line-length=127 --select=E9,Fb3,F7,F82 --show-source --statistics
 	isort --check --diff --multi-line=3 --line-length=88 --trailing-comma pamps tests setup.py
 	black --check --diff pamps tests setup.py

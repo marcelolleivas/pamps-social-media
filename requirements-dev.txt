@@ -6,5 +6,6 @@ pytest              # execução de testes
 pytest-order        # ordenação de testes
 httpx               # requests async para testes
 black               # auto formatação
+isort               # linter
 flake8              # linter
 coverage            # cobertura de testes

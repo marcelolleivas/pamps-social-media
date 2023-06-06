@@ -1,0 +1,5 @@
+[development]
+dynaconf_merge = true
+
+[development.security]
+secret_key = "e5e124a6f71a0453c9fa254554d692525fabbb8ef36888ce3ee06a5755912248"

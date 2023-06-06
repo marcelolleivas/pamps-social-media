@@ -1,0 +1,46 @@
+name: Run Python linters and tests
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      #----------------------------------------------
+      #       check-out repo and set-up python
+      #----------------------------------------------
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.10.x
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-dev.txt
+          pip install -e .
+
+      - name: Run lint with flake8
+        run: |
+          flake8 pamps tests --count --exit-zero --max-complexity=10 \
+          --max-line-length=127 --select=E9,Fb3,F7,F82 --show-source --statistics
+
+      - name: Run lint with isort
+        run: |
+          isort --check --diff --multi-line=3 --line-length=88 --trailing-comma \
+          pamps tests setup.py
+
+      - name: Check code style with black
+        run: black --check --diff pamps tests setup.py
+
+      - name: Run unit tests with coverage
+        run: |
+          make tests-with-coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
