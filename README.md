@@ -1,3 +1,7 @@
+[![codecov](https://codecov.io/gh/marcelolleivas/pamps-social-media/branch/main/graph/badge.svg?token=SZPGK3DLBS)](https://codecov.io/gh/marcelolleivas/pamps-social-media)
+![black](https://img.shields.io/badge/code%20style-black-black)
+![isort](https://img.shields.io/badge/isort-checked-yellow)
+
 # Pamps
 Simple social media and social networking service. Based on [fastapi-workshop](https://github.com/rochacbruno/fastapi-workshop).
 
